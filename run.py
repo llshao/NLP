@@ -14,7 +14,7 @@ import numpy.matlib as matlib
 def read_traindata(file_name):
 	data	=	[]
 	temp	=	[]
-	with open(file_name, newline='') as csvfile:
+	with open(file_name) as csvfile:
 		csvreader = csv.reader(csvfile)
 		try:
 			for row in csvreader:
@@ -62,11 +62,14 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	#Ytrain		=	[]
 	#Xarray 		=	np.asarray(read_traindata(Xtrain_file))
 	#Yarray 		=	np.asarray(read_traindata(Ytrain_file))
-	Xtrain		=	np.loadtxt(Xtrain_file,delimiter=',',dtype=int)
-	Ytrain		=	np.loadtxt(Ytrain_file,delimiter=',',dtype=int)
-	Xtest		=	np.loadtxt(test_data_file,delimiter=',',dtype=int)
+	#Xtrain		=	np.loadtxt(Xtrain_file,delimiter=',',dtype=int)
+	#Ytrain		=	np.loadtxt(Ytrain_file,delimiter=',',dtype=int)
+	#Xtest		=	np.loadtxt(test_data_file,delimiter=',',dtype=int)
+	Xtrain		=	np.asarray(read_traindata(Xtrain_file))
+	Ytrain		=	np.asarray(read_traindata(Ytrain_file))
+	Xtest		=	np.asarray(read_traindata(test_data_file))
 	#data_length	=	len(Xtrain)
-	Vac		= 	len(Xarray[0])
+	Vac		= 	len(Xtrain[0])
 	#if SHUFFLE==True:
 	#	Shuffle_index	=	np.random.permutation(range(data_length)) 
 	#else:
@@ -88,22 +91,22 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	if(DEBUG==True):
 		for i in range(0,2):
 			print('i{}: Xarray{}: Shape:'.format(i,Xarray))
-			print(Xarray.shape)
-			print(Xarray.ndim)
-			print(Xarray.size)
-			print(Xarray[i].shape)
-			print(Xarray[i].ndim)
-			print(type(Xarray[i]))
-			print(type(Xarray[i,0]))
+			print(Xtrain.shape)
+			print(Xtrain.ndim)
+			print(Xtrain.size)
+			print(Xtrain[i].shape)
+			print(Xtrain[i].ndim)
+			print(type(Xtrain[i]))
+			print(type(Xtrain[i,0]))
 			print(type(Xtrain[i]))
 			print(type(Xtrain[i][0]))
 			print('i{}: Yarray{}: Shape:'.format(i,Yarray))
-			print(Yarray.shape)
-			print(Yarray.ndim)
-			print(Yarray.size)
-			print(Yarray[i].shape)
-			print(Yarray[i].ndim)
-			print(type(Yarray[i]))
+			print(Ytrain.shape)
+			print(Ytrain.ndim)
+			print(Ytrain.size)
+			print(Ytrain[i].shape)
+			print(Ytrain[i].ndim)
+			print(type(Ytrain[i]))
 			print(type(Ytrain[i]))
 			#print('i{}: Xtrain{}: Row{}: Col{}'.format(i,Xtrain[i],len(Xtrain),len(Xtrain[i])))
 			#write_data(Xread_file,Xtrain)
@@ -210,21 +213,21 @@ DEBUG=False
 SHUFFLE=False
 np.random.seed(0)
 #-------------------------------------------------------------------------------
-X_file	=	'Xtrain.csv'
-Y_file	=	'Ytrain.csv'
+Xtrain_file	=	'../reference/Xtrain.csv'
+Ytrain_file	=	'../reference/Ytrain.csv'
 test_pct	=	0.9		#from test_pct to end will be used as the test set
-train_pct	=	1		#how much percentage of 0-test_pct will be used as the training set
-Xtrain_file	=	'Xtrain'+str(train_pct)+'.csv'
-Ytrain_file	=	'Ytrain'+str(train_pct)+'.csv'
-test_data_file = 'test.csv'
+train_pct	=	1.0		#how much percentage of 0-test_pct will be used as the training set
+Xtrain1_file	=	'Xtrain'+str(train_pct)+'.csv'
+Ytrain1_file	=	'Ytrain'+str(train_pct)+'.csv'
+test_data_file  =	'test.csv'
 pred_file	=	'Ypred'+str(train_pct)+'.csv'
 
 #Xtrain		=	[]
 #Ytrain		=	[]
-#Xarray 		=	np.asarray(read_traindata(Xtrain_file))
-#Yarray 		=	np.asarray(read_traindata(Ytrain_file))
-Xarray		=	np.loadtxt(X_file,delimiter=',',dtype=int)
-Yarray		=	np.loadtxt(Y_file,delimiter=',',dtype=int)
+Yarray 		=	np.asarray(read_traindata(Ytrain_file))
+Xarray 		=	np.asarray(read_traindata(Xtrain_file))
+#Xarray		=	np.loadtxt(X_file,delimiter=',',dtype=int)
+#Yarray		=	np.loadtxt(Y_file,delimiter=',',dtype=int)
 data_length	=	len(Xarray)
 Vac		= 	len(Xarray[0])
 if SHUFFLE==True:
@@ -238,33 +241,13 @@ Xarray		=	Xarray[Shuffle_index,...]
 Yarray		=	Yarray[Shuffle_index]
 Xtrain		=	Xarray[0:int(train_pct*test_pct*data_length),...]
 Xtest		=	Xarray[int(test_pct*data_length):,...]
-Ytrain		=	Yarray[0:int(test_pct*data_length),...]
+Ytrain		=	Yarray[0:int(train_pct*test_pct*data_length),...]
 Ytest		=	Yarray[int(test_pct*data_length):,...]
 #--------------Save as csv--------------------------------------------------
-np.savetxt(Xtrain_file,Xtrain,fmt='%d',delimiter=',')
-np.savetxt(Ytrain_file,Ytrain,fmt='%d',delimiter=',')
+np.savetxt(Xtrain1_file,Xtrain,fmt='%d',delimiter=',')
+np.savetxt(Ytrain1_file,Ytrain,fmt='%d',delimiter=',')
 np.savetxt(test_data_file,Xtest,fmt='%d',delimiter=',')
-pred_y=run(Xtrain_file, Ytrain_file, test_data_file, pred_file)
+pred_y=run(Xtrain1_file, Ytrain1_file, test_data_file, pred_file)
 acc,Fmea,Final_score=GetScore(Ytest,pred_y)
 print("acc"+str(acc)+" Fmea"+str(Fmea)+" Final_score"+str(Final_score))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
