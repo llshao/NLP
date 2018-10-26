@@ -9,6 +9,11 @@
 import numpy as np
 import csv, sys
 import numpy.matlib as matlib
+# Gloable variable & setting
+
+DEBUG=False
+SHUFFLE=False
+np.random.seed(0)
 
 # define other functions here
 def read_traindata(file_name):
@@ -208,11 +213,8 @@ def GetScore(Ytest,pred_y):
 #===============================================================================
 #===============================================================================
 #-----------------------------Main Function-------------------------------------
-# Gloable variable & setting
-DEBUG=False
-SHUFFLE=False
-np.random.seed(0)
 #-------------------------------------------------------------------------------
+'''
 Xtrain_file	=	'../reference/Xtrain.csv'
 Ytrain_file	=	'../reference/Ytrain.csv'
 test_pct	=	0.9		#from test_pct to end will be used as the test set
@@ -250,4 +252,4 @@ np.savetxt(test_data_file,Xtest,fmt='%d',delimiter=',')
 pred_y=run(Xtrain1_file, Ytrain1_file, test_data_file, pred_file)
 acc,Fmea,Final_score=GetScore(Ytest,pred_y)
 print("acc"+str(acc)+" Fmea"+str(Fmea)+" Final_score"+str(Final_score))
-
+'''
