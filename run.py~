@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # import the required packages here
 
@@ -10,8 +10,37 @@ import numpy as np
 import csv, sys
 import numpy.matlib as matlib
 
-DEBUG=False
-SHUFFLE=False
+
+
+
+
+# define other functions here
+def read_traindata(file_name):
+	data	=	[]
+	temp	=	[]
+	with open(file_name, newline='') as csvfile:
+		csvreader = csv.reader(csvfile)
+		try:
+			for row in csvreader:
+				#for rowi in row:
+				#	print(rowi)
+				#	temp.append(int(rowi))
+				if (len(row)>1):
+					data.append([int(temp) for temp in row ])
+				else:
+					data.append(int(row[0]))
+				#print(', '.join(row))
+
+		except csv.Error as e:
+			sys.exit('file {},line {}:{}'.format(Xtrain_file,csvreader.line_num,e))
+	return data
+
+def write_data(file_name,someiterable):
+	with open(file_name, 'w', newline='') as f:
+		writer = csv.writer(f)
+		writer.writerows(someiterable)
+
+
 def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	'''The function to run your ML algorithm on given datasets, generate the predictions and save them into the provided file path
 	
@@ -33,27 +62,30 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 
 	# save your predictions into the file pred_file
 	print("I LOVE NLP!")
-	Xtrain		=	[]
-	Ytrain		=	[]
-	Xarray 		=	np.asarray(read_traindata(Xtrain_file))
-	Yarray 		=	np.asarray(read_traindata(Ytrain_file))
-	data_length	=	len(Xarray)
+	#Xtrain		=	[]
+	#Ytrain		=	[]
+	#Xarray 		=	np.asarray(read_traindata(Xtrain_file))
+	#Yarray 		=	np.asarray(read_traindata(Ytrain_file))
+	Xtrain		=	np.loadtxt(Xtrain_file,delimiter=',',dtype=int)
+	Ytrain		=	np.loadtxt(Ytrain_file,delimiter=',',dtype=int)
+	Xtest		=	np.loadtxt(test_data_file,delimiter=',',dtype=int)
+	#data_length	=	len(Xtrain)
 	Vac		= 	len(Xarray[0])
-	if SHUFFLE==True:
-		Shuffle_index	=	np.random.permutation(range(data_length)) 
-	else:
-		Shuffle_index	=	range(data_length) 
+	#if SHUFFLE==True:
+	#	Shuffle_index	=	np.random.permutation(range(data_length)) 
+	#else:
+	#	Shuffle_index	=	range(data_length) 
 	
-	if DEBUG==True:
-		print("Shuffle:{}".format(Shuffle_index))
-	Xarray		=	Xarray[Shuffle_index,...]
-	Yarray		=	Yarray[Shuffle_index]
-	test_pct	=	0.9
-	train_pct	=	1.0
-	Xtrain		=	Xarray[0:int(train_pct*test_pct*data_length),...]
-	Xtest		=	Xarray[int(test_pct*data_length):,...]
-	Ytrain		=	Yarray[0:int(test_pct*data_length),...]
-	Ytest		=	Yarray[int(test_pct*data_length):,...]
+	#if DEBUG==True:
+	#	print("Shuffle:{}".format(Shuffle_index))
+	#Xtrain		=	Xtrain[Shuffle_index,...]
+	#Ytrain		=	Ytrain[Shuffle_index]
+	#test_pct	=	0.9
+	#train_pct	=	1.0
+	#Xtrain		=	Xarray[0:int(train_pct*test_pct*data_length),...]
+	#Xtest		=	Xarray[int(test_pct*data_length):,...]
+	#Ytrain		=	Yarray[0:int(test_pct*data_length),...]
+	#Ytest		=	Yarray[int(test_pct*data_length):,...]
 	#Xtrain		=	read_traindata(Xtrain_file)
 	#Ytrain		=	read_traindata(Ytrain_file)
 	#DEBUGGING ONLY
@@ -151,49 +183,74 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 		print("P_y1-y0:shape{}".format(P_diff.shape))
 		print("Y_test:{}".format(Ytest))
 		print("Y_test shape:{}".format(Ytest.shape))
+		print("Ypred:{}".format(pred_y))
 		print("W_1all:{}".format(W_1all.sum()))
 		print("W_1all:{}".format(np.sum(W_1all)))
 		print("W_0all:{}".format(W_0all.sum()))
 		print("W_notzero:{}".format(W_notzero))
 		print("W_notzero shape:{}".format(W_notzero.shape))
+	return pred_y
 
+def GetScore(Ytest,pred_y):
+	print("TODO!!!")
+	# for binary classification only
+	acc	=	1-float(np.sum(np.abs(Ytest-pred_y))/len(Ytest))
+	d	=	np.sum(Ytest*pred_y)
+	b_d	=	np.sum(pred_y)
+	c_d	=	np.sum(Ytest)
+	precision	=	float(d/b_d)
+	recall		=	float(d/c_d)
+	Fmea		=	2*precision*recall/(precision+recall)
+	Final_score	=	0.5*acc+0.5*Fmea
+	return acc,Fmea,Final_score
+	
 
-
-# define other functions here
-def read_traindata(file_name):
-	data	=	[]
-	temp	=	[]
-	with open(file_name, newline='') as csvfile:
-		csvreader = csv.reader(csvfile)
-		try:
-			for row in csvreader:
-				#for rowi in row:
-				#	print(rowi)
-				#	temp.append(int(rowi))
-				if (len(row)>1):
-					data.append([int(temp) for temp in row ])
-				else:
-					data.append(int(row[0]))
-				#print(', '.join(row))
-
-		except csv.Error as e:
-			sys.exit('file {},line {}:{}'.format(Xtrain_file,csvreader.line_num,e))
-	return data
-
-def write_data(file_name,someiterable):
-	with open(file_name, 'w', newline='') as f:
-		writer = csv.writer(f)
-		writer.writerows(someiterable)
 
 #===============================================================================
 #===============================================================================
 #-----------------------------Main Function-------------------------------------
+# Gloable variable & setting
+DEBUG=False
+SHUFFLE=False
 np.random.seed(0)
-Xtrain_file	=	"Xtrain.csv"
-Ytrain_file	=	"Ytrain.csv"
-test_data_file = "Nope"
-pred_file	=	"Ypred.csv"
-final_score=run(Xtrain_file, Ytrain_file, test_data_file, pred_file)
+#-------------------------------------------------------------------------------
+X_file	=	'Xtrain.csv'
+Y_file	=	'Ytrain.csv'
+test_pct	=	0.9		#from test_pct to end will be used as the test set
+train_pct	=	1		#how much percentage of 0-test_pct will be used as the training set
+Xtrain_file	=	'Xtrain'+str(train_pct)+'.csv'
+Ytrain_file	=	'Ytrain'+str(train_pct)+'.csv'
+test_data_file = 'test.csv'
+pred_file	=	'Ypred'+str(train_pct)+'.csv'
+
+#Xtrain		=	[]
+#Ytrain		=	[]
+#Xarray 		=	np.asarray(read_traindata(Xtrain_file))
+#Yarray 		=	np.asarray(read_traindata(Ytrain_file))
+Xarray		=	np.loadtxt(X_file,delimiter=',',dtype=int)
+Yarray		=	np.loadtxt(Y_file,delimiter=',',dtype=int)
+data_length	=	len(Xarray)
+Vac		= 	len(Xarray[0])
+if SHUFFLE==True:
+	Shuffle_index	=	np.random.permutation(range(data_length)) 
+else:
+	Shuffle_index	=	range(data_length) 
+
+if DEBUG==True:
+	print("Shuffle:{}".format(Shuffle_index))
+Xarray		=	Xarray[Shuffle_index,...]
+Yarray		=	Yarray[Shuffle_index]
+Xtrain		=	Xarray[0:int(train_pct*test_pct*data_length),...]
+Xtest		=	Xarray[int(test_pct*data_length):,...]
+Ytrain		=	Yarray[0:int(test_pct*data_length),...]
+Ytest		=	Yarray[int(test_pct*data_length):,...]
+#--------------Save as csv--------------------------------------------------
+np.savetxt(Xtrain_file,Xtrain,fmt='%d',delimiter=',')
+np.savetxt(Ytrain_file,Ytrain,fmt='%d',delimiter=',')
+np.savetxt(test_data_file,Xtest,fmt='%d',delimiter=',')
+pred_y=run(Xtrain_file, Ytrain_file, test_data_file, pred_file)
+acc,Fmea,Final_score=GetScore(Ytest,pred_y)
+print("acc"+str(acc)+" Fmea"+str(Fmea)+" Final_score"+str(Final_score))
 
 
 
