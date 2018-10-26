@@ -1,0 +1,186 @@
+#!/usr/bin/env python
+
+# import the required packages here
+
+# Homework 1: Classification using Naive Bayesian & Voted Perceptron
+# Created on 10/24/2018
+# Author: Leilai Shao
+#-----------------------------------------------------------------------------------------------------------------------
+import numpy as np
+import csv, sys
+import numpy.matlib as matlib
+import matplotlib.pyplot as plt
+import scipy.stats as scist
+import scipy.io as sio
+DEBUG=True
+def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
+	'''The function to run your ML algorithm on given datasets, generate the predictions and save them into the provided file path
+	
+	Parameters
+	----------
+	Xtrain_file: string
+		the path to Xtrain csv file
+	Ytrain_file: string
+		the path to Ytrain csv file
+	test_data_file: string
+		the path to test data csv file
+	pred_file: string
+		the prediction file to be saved by your code. You have to save your predictions into this file path following the same format of Ytrain_file
+	'''
+	print("Hello NLP!\n")
+	## your implementation here
+	# read data from Xtrain_file, Ytrain_file and test_data_file
+
+	# your algorithm
+
+	# save your predictions into the file pred_file
+
+
+# define other functions here
+def read_traindata(file_name):
+	data	=	[]
+	temp	=	[]
+	with open(file_name, newline='') as csvfile:
+		csvreader = csv.reader(csvfile)
+		try:
+			for row in csvreader:
+				#for rowi in row:
+				#	print(rowi)
+				#	temp.append(int(rowi))
+				if (len(row)>1):
+					data.append([int(temp) for temp in row ])
+				else:
+					data.append(int(row[0]))
+				#print(', '.join(row))
+
+		except csv.Error as e:
+			sys.exit('file {},line {}:{}'.format(Xtrain_file,csvreader.line_num,e))
+	return data
+
+def write_data(file_name,someiterable):
+	with open(file_name, 'w', newline='') as f:
+		writer = csv.writer(f)
+		writer.writerows(someiterable)
+
+#===============================================================================
+#===============================================================================
+#-----------------------------Main Function-------------------------------------
+print("I LOVE NLP")
+np.random.seed(0)
+Xtrain_file	=	"Xtrain.csv"
+Ytrain_file	=	"Ytrain.csv"
+Xread_file	=	"Test_readX.csv"
+Yread_file	=	"Test_readY.csv"
+Xtrain		=	[]
+Ytrain		=	[]
+Xarray 		=	np.asarray(read_traindata(Xtrain_file))
+Yarray 		=	np.asarray(read_traindata(Ytrain_file))
+data_length	=	len(Xarray)
+Vac		= 	len(Xarray[0])
+Shuffle_index	=	np.random.permutation(range(data_length)) 
+if DEBUG==True:
+	print("Shuffle:{}".format(Shuffle_index))
+Xarray		=	Xarray[Shuffle_index,...]
+Yarray		=	Yarray[Shuffle_index]
+test_pct	=	0.9
+Xtrain		=	Xarray[0:int(test_pct*data_length),...]
+Xtest		=	Xarray[int(test_pct*data_length):,...]
+Ytrain		=	Yarray[0:int(test_pct*data_length),...]
+Ytest		=	Yarray[int(test_pct*data_length):,...]
+#Xtrain		=	read_traindata(Xtrain_file)
+#Ytrain		=	read_traindata(Ytrain_file)
+''' DEBUGGING ONLY
+for i in range(0,2):
+	if(DEBUG==True):
+		print('i{}: Xarray{}: Shape:'.format(i,Xarray))
+		print(Xarray.shape)
+		print(Xarray.ndim)
+		print(Xarray.size)
+		print(Xarray[i].shape)
+		print(Xarray[i].ndim)
+		print(type(Xarray[i]))
+		print(type(Xarray[i,0]))
+		print(type(Xtrain[i]))
+		print(type(Xtrain[i][0]))
+		print('i{}: Yarray{}: Shape:'.format(i,Yarray))
+		print(Yarray.shape)
+		print(Yarray.ndim)
+		print(Yarray.size)
+		print(Yarray[i].shape)
+		print(Yarray[i].ndim)
+		print(type(Yarray[i]))
+		print(type(Ytrain[i]))
+		#print('i{}: Xtrain{}: Row{}: Col{}'.format(i,Xtrain[i],len(Xtrain),len(Xtrain[i])))
+		#write_data(Xread_file,Xtrain)
+		#print('i{}: Ytrain{}: Row{}: Col{}'.format(i,Ytrain[i],len(Ytrain),len(Ytrain[i])))
+		#write_data(Yread_file,Ytrain)
+'''
+print("I LOVE LOVE NLP")
+''' Old using all samples
+Y_1index = [i for (i,val) in enumerate(Yarray) if val>0]
+Y_0index = [i for (i,val) in enumerate(Yarray) if val<1]
+X_1array = Xarray[Y_1index,:]
+X_0array = Xarray[Y_0index,:]
+Y_count  = len(Yarray)
+'''
+##----------------------------------------------
+##--------Train Data Processing------------------
+##----------------------------------------------
+Y_1index = [i for (i,val) in enumerate(Ytrain) if val>0]
+Y_0index = [i for (i,val) in enumerate(Ytrain) if val<1]
+X_1array = Xtrain[Y_1index,:]
+X_0array = Xtrain[Y_0index,:]
+Y_count  = len(Ytrain)
+Y_1count = len(Y_1index)
+Y_0count = len(Y_0index)
+W_1all   = np.asarray([sum(x) for x in zip(*X_1array)])
+W_0all   = np.asarray([sum(x) for x in zip(*X_0array)])
+W_all    = W_1all+W_0all
+#Vac	 = len(X_1array[0])
+#W_0all   = [sum(x) for x in zip(*X_0array)]
+if(DEBUG==True):
+	print('Yarray type:{}'.format(type(Yarray)))
+	print('Y_1index:{}'.format(Y_1index))
+	print('X_1array:{}'.format(X_1array))
+	print('X_1array shape:{}'.format(X_1array.shape))
+	print('X_0array:{}'.format(X_0array))
+	print('X_0array shape:{}'.format(X_0array.shape))
+	print('Y_1count:{}'.format(Y_1count))
+	print('Y_0count:{}'.format(Y_0count))
+	print('Y_count:{}'.format(Y_count))
+	print('W_1all:{}'.format(W_1all))
+	print('W_0all:{}'.format(W_0all))
+	print('W_all:{}'.format(W_all))
+	print('W_1all shape:'+str(np.shape(W_1all)))
+	print('W_0all shape:'+str(np.shape(W_0all)))
+	print('W_all shape:'+str(np.shape(W_all)))
+	print('Vocabulary :'+str(Vac))
+W_notzero =	np.asarray([i for (i,val) in enumerate(W_all) if val>0])
+C1_prob	=	(1.0+W_1all)/(np.sum(W_1all)+Vac)
+C0_prob	=	(1.0+W_0all)/(np.sum(W_0all)+Vac)
+#Test_index =	np.zeros(Xtest.shape)
+Test_index =	[]
+for x in np.nditer(Xtest):
+	if x >0:
+		Test_index.append(1)
+	else:
+		Test_index.append(0)
+Test_index=np.asarray(Test_index)
+Test_index=Test_index.reshape(Xtest.shape)
+print("test_index:{}".format(Test_index))
+print("test_index:{}".format(Test_index.shape))
+P_y1	=	np.sum(np.log10(C1_prob)*Test_index,axis=1)+np.log10(float(Y_1count/Y_count))
+P_y0	=	np.sum(np.log10(C0_prob)*Test_index,axis=1)+np.log10(float(Y_0count/Y_count))
+P_diff=P_y1-P_y0
+#P_diff1=np.sum(np.log10((W)))
+print("P_y1:{}".format(P_y1))
+print("P_y0:{}".format(P_y0))
+print("P_y1-y0:{}".format(P_diff))
+print("P_y1-y0:shape{}".format(P_diff.shape))
+print("Y_test:{}".format(Ytest))
+print("Y_test shape:{}".format(Ytest.shape))
+print("W_1all:{}".format(W_1all.sum()))
+print("W_1all:{}".format(np.sum(W_1all)))
+print("W_0all:{}".format(W_0all.sum()))
+print("W_notzero:{}".format(W_notzero))
+print("W_notzero shape:{}".format(W_notzero.shape))
