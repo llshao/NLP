@@ -9,12 +9,7 @@
 import numpy as np
 import csv, sys
 import numpy.matlib as matlib
-# Gloable variable & setting
-
 DEBUG=False
-SHUFFLE=False
-np.random.seed(0)
-
 # define other functions here
 def read_traindata(file_name):
 	data	=	[]
@@ -67,12 +62,12 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	#Ytrain		=	[]
 	#Xarray 		=	np.asarray(read_traindata(Xtrain_file))
 	#Yarray 		=	np.asarray(read_traindata(Ytrain_file))
-	#Xtrain		=	np.loadtxt(Xtrain_file,delimiter=',',dtype=int)
-	#Ytrain		=	np.loadtxt(Ytrain_file,delimiter=',',dtype=int)
-	#Xtest		=	np.loadtxt(test_data_file,delimiter=',',dtype=int)
-	Xtrain		=	np.asarray(read_traindata(Xtrain_file))
-	Ytrain		=	np.asarray(read_traindata(Ytrain_file))
-	Xtest		=	np.asarray(read_traindata(test_data_file))
+	Xtrain		=	np.loadtxt(Xtrain_file,delimiter=',',dtype=int)
+	Ytrain		=	np.loadtxt(Ytrain_file,delimiter=',',dtype=int)
+	Xtest		=	np.loadtxt(test_data_file,delimiter=',',dtype=int)
+	#Xtrain		=	np.asarray(read_traindata(Xtrain_file))
+	#Ytrain		=	np.asarray(read_traindata(Ytrain_file))
+	#Xtest		=	np.asarray(read_traindata(test_data_file))
 	#data_length	=	len(Xtrain)
 	Vac		= 	len(Xtrain[0])
 	#if SHUFFLE==True:
@@ -153,23 +148,25 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 		print('W_all shape:'+str(np.shape(W_all)))
 		print('Vocabulary :'+str(Vac))
 	W_notzero =	np.asarray([i for (i,val) in enumerate(W_all) if val>0])
-	C1_prob	=	(1.0+W_1all)/(np.sum(W_1all)+Vac)
-	C0_prob	=	(1.0+W_0all)/(np.sum(W_0all)+Vac)
+	#C1_prob	=	(1.0+W_1all)/(np.sum(W_1all)+Vac)
+	#C0_prob	=	(1.0+W_0all)/(np.sum(W_0all)+Vac)
+	C1toC0	=	((float(1.0)+W_1all)/(float(1.0)+W_0all))*((np.sum(W_0all)+float(Vac))/(np.sum(W_1all)+float(Vac)))
 	#Test_index =	np.zeros(Xtest.shape)
 	Test_index =	[]
 	for x in np.nditer(Xtest):
 		if x >0:
-			Test_index.append(1)
+			Test_index.append(1.0)
 		else:
-			Test_index.append(0)
+			Test_index.append(0.0)
 	Test_index=np.asarray(Test_index)
 	Test_index=Test_index.reshape(Xtest.shape)
 	if DEBUG==True:
 		print("test_index:{}".format(Test_index))
 		print("test_index:{}".format(Test_index.shape))
-	P_y1	=	np.sum(np.log10(C1_prob)*Test_index,axis=1)+np.log10(float(Y_1count/Y_count))
-	P_y0	=	np.sum(np.log10(C0_prob)*Test_index,axis=1)+np.log10(float(Y_0count/Y_count))
-	P_diff	=	P_y1-P_y0
+	#P_y1	=	np.sum(np.log10(C1_prob)*Xtest,axis=1)+np.log10(float(Y_1count/Y_count))
+	#P_y0	=	np.sum(np.log10(C0_prob)*Xtest,axis=1)+np.log10(float(Y_0count/Y_count))
+	#P_diff	=	P_y1-P_y0
+	P_diff	=	np.sum(np.log10(C1toC0)*Test_index,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
 	pred_y	=	[]
 	for x in np.nditer(P_diff):
 		if x >=0:
@@ -177,6 +174,11 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 		else:
 			pred_y.append(int(0))
 	pred_y	=	np.asarray(pred_y)
+	#acc,Fmea,FinalScore=GetScore(Ytest,pred_y)
+	print("pred_y:{}".format(pred_y))
+	print("Ytrain:{}".format(Ytrain))
+	print("Xtrain:{}".format(Xtrain))
+	#print("Acc:{} Fmea:{} FinalCore;{}".format(acc,Fmea,FinalScore))
 	np.savetxt(pred_file,pred_y,fmt='%d',delimiter=',')
 	#write_data(pred_file,pred_y)
 	#P_diff1=np.sum(np.log10((W)))
@@ -196,9 +198,9 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	return pred_y
 
 def GetScore(Ytest,pred_y):
-	print("TODO!!!")
+	print("Give me a high score!!Pls!!!")
 	# for binary classification only
-	acc	=	1-float(np.sum(np.abs(Ytest-pred_y))/len(Ytest))
+	acc	=	1.0-float(np.sum(np.abs(Ytest-pred_y))/len(Ytest))
 	d	=	np.sum(Ytest*pred_y)
 	b_d	=	np.sum(pred_y)
 	c_d	=	np.sum(Ytest)
@@ -210,46 +212,3 @@ def GetScore(Ytest,pred_y):
 	
 
 
-#===============================================================================
-#===============================================================================
-#-----------------------------Main Function-------------------------------------
-#-------------------------------------------------------------------------------
-'''
-Xtrain_file	=	'../reference/Xtrain.csv'
-Ytrain_file	=	'../reference/Ytrain.csv'
-test_pct	=	0.9		#from test_pct to end will be used as the test set
-train_pct	=	1.0		#how much percentage of 0-test_pct will be used as the training set
-Xtrain1_file	=	'Xtrain'+str(train_pct)+'.csv'
-Ytrain1_file	=	'Ytrain'+str(train_pct)+'.csv'
-test_data_file  =	'test.csv'
-pred_file	=	'Ypred'+str(train_pct)+'.csv'
-
-#Xtrain		=	[]
-#Ytrain		=	[]
-Yarray 		=	np.asarray(read_traindata(Ytrain_file))
-Xarray 		=	np.asarray(read_traindata(Xtrain_file))
-#Xarray		=	np.loadtxt(X_file,delimiter=',',dtype=int)
-#Yarray		=	np.loadtxt(Y_file,delimiter=',',dtype=int)
-data_length	=	len(Xarray)
-Vac		= 	len(Xarray[0])
-if SHUFFLE==True:
-	Shuffle_index	=	np.random.permutation(range(data_length)) 
-else:
-	Shuffle_index	=	range(data_length) 
-
-if DEBUG==True:
-	print("Shuffle:{}".format(Shuffle_index))
-Xarray		=	Xarray[Shuffle_index,...]
-Yarray		=	Yarray[Shuffle_index]
-Xtrain		=	Xarray[0:int(train_pct*test_pct*data_length),...]
-Xtest		=	Xarray[int(test_pct*data_length):,...]
-Ytrain		=	Yarray[0:int(train_pct*test_pct*data_length),...]
-Ytest		=	Yarray[int(test_pct*data_length):,...]
-#--------------Save as csv--------------------------------------------------
-np.savetxt(Xtrain1_file,Xtrain,fmt='%d',delimiter=',')
-np.savetxt(Ytrain1_file,Ytrain,fmt='%d',delimiter=',')
-np.savetxt(test_data_file,Xtest,fmt='%d',delimiter=',')
-pred_y=run(Xtrain1_file, Ytrain1_file, test_data_file, pred_file)
-acc,Fmea,Final_score=GetScore(Ytest,pred_y)
-print("acc"+str(acc)+" Fmea"+str(Fmea)+" Final_score"+str(Final_score))
-'''
