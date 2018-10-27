@@ -11,31 +11,6 @@ import csv, sys
 import numpy.matlib as matlib
 DEBUG=False
 # define other functions here
-def read_traindata(file_name):
-	data	=	[]
-	temp	=	[]
-	with open(file_name) as csvfile:
-		csvreader = csv.reader(csvfile)
-		try:
-			for row in csvreader:
-				#for rowi in row:
-				#	print(rowi)
-				#	temp.append(int(rowi))
-				if (len(row)>1):
-					data.append([int(temp) for temp in row ])
-				else:
-					data.append(int(row[0]))
-				#print(', '.join(row))
-
-		except csv.Error as e:
-			sys.exit('file {},line {}:{}'.format(Xtrain_file,csvreader.line_num,e))
-	return data
-
-def write_data(file_name,someiterable):
-	with open(file_name, 'w', newline='') as f:
-		writer = csv.writer(f)
-		writer.writerows(someiterable)
-
 
 def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	'''The function to run your ML algorithm on given datasets, generate the predictions and save them into the provided file path
