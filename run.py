@@ -10,6 +10,7 @@ import numpy as np
 import csv, sys
 import numpy.matlib as matlib
 DEBUG=False
+T    =50
 # define other functions here
 
 def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
@@ -33,17 +34,9 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 
 	# save your predictions into the file pred_file
 	print("I LOVE NLP!")
-	#Xtrain		=	[]
-	#Ytrain		=	[]
-	#Xarray 		=	np.asarray(read_traindata(Xtrain_file))
-	#Yarray 		=	np.asarray(read_traindata(Ytrain_file))
 	Xtrain		=	np.loadtxt(Xtrain_file,delimiter=',',dtype=int)
 	Ytrain		=	np.loadtxt(Ytrain_file,delimiter=',',dtype=int)
 	Xtest		=	np.loadtxt(test_data_file,delimiter=',',dtype=int)
-	#Xtrain		=	np.asarray(read_traindata(Xtrain_file))
-	#Ytrain		=	np.asarray(read_traindata(Ytrain_file))
-	#Xtest		=	np.asarray(read_traindata(test_data_file))
-	#data_length	=	len(Xtrain)
 	Vac		= 	len(Xtrain[0])
 	#if SHUFFLE==True:
 	#	Shuffle_index	=	np.random.permutation(range(data_length)) 
@@ -64,8 +57,8 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	#Ytrain		=	read_traindata(Ytrain_file)
 	#DEBUGGING ONLY
 	if(DEBUG==True):
-		for i in range(0,2):
-			print('i{}: Xarray{}: Shape:'.format(i,Xarray))
+		for i in range(0,1):
+			print('i{}: Xtrian{}: Shape:'.format(i,Xtrain))
 			print(Xtrain.shape)
 			print(Xtrain.ndim)
 			print(Xtrain.size)
@@ -75,7 +68,7 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 			print(type(Xtrain[i,0]))
 			print(type(Xtrain[i]))
 			print(type(Xtrain[i][0]))
-			print('i{}: Yarray{}: Shape:'.format(i,Yarray))
+			print('i{}: Yarray{}: Shape:'.format(i,Ytrain))
 			print(Ytrain.shape)
 			print(Ytrain.ndim)
 			print(Ytrain.size)
@@ -93,83 +86,52 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	##----------------------------------------------
 	##--------Train Data Processing------------------
 	##----------------------------------------------
-	Y_1index = [i for (i,val) in enumerate(Ytrain) if val>0]
-	Y_0index = [i for (i,val) in enumerate(Ytrain) if val<1]
-	X_1array = Xtrain[Y_1index,:]
-	X_0array = Xtrain[Y_0index,:]
 	Y_count  = len(Ytrain)
-	Y_1count = len(Y_1index)
-	Y_0count = len(Y_0index)
-	W_1all   = np.asarray([sum(x) for x in zip(*X_1array)])
-	W_0all   = np.asarray([sum(x) for x in zip(*X_0array)])
-	W_all    = W_1all+W_0all
 	#Vac	 = len(X_1array[0])
 	#W_0all   = [sum(x) for x in zip(*X_0array)]
 	if(DEBUG==True):
-		print('Yarray type:{}'.format(type(Yarray)))
-		print('Y_1index:{}'.format(Y_1index))
-		print('X_1array:{}'.format(X_1array))
-		print('X_1array shape:{}'.format(X_1array.shape))
-		print('X_0array:{}'.format(X_0array))
-		print('X_0array shape:{}'.format(X_0array.shape))
-		print('Y_1count:{}'.format(Y_1count))
-		print('Y_0count:{}'.format(Y_0count))
-		print('Y_count:{}'.format(Y_count))
-		print('W_1all:{}'.format(W_1all))
-		print('W_0all:{}'.format(W_0all))
-		print('W_all:{}'.format(W_all))
-		print('W_1all shape:'+str(np.shape(W_1all)))
-		print('W_0all shape:'+str(np.shape(W_0all)))
-		print('W_all shape:'+str(np.shape(W_all)))
+		print('Ytrian type:{}'.format(type(Ytrain)))
+		print('Xtrian type:{}'.format(type(Xtrain)))
 		print('Vocabulary :'+str(Vac))
-	W_notzero =	np.asarray([i for (i,val) in enumerate(W_all) if val>0])
-	#C1_prob	=	(1.0+W_1all)/(np.sum(W_1all)+Vac)
-	#C0_prob	=	(1.0+W_0all)/(np.sum(W_0all)+Vac)
-	C1toC0	=	((float(1.0)+W_1all)/(float(1.0)+W_0all))*((np.sum(W_0all)+float(Vac))/(np.sum(W_1all)+float(Vac)))
-	#Test_index =	np.zeros(Xtest.shape)
-	Test_index =	[]
-	for x in np.nditer(Xtest):
-		if x >0:
-			Test_index.append(1.0)
-		else:
-			Test_index.append(0.0)
-	Test_index=np.asarray(Test_index)
-	Test_index=Test_index.reshape(Xtest.shape)
+#---------------------------------------------------------------------
+#-------------------------Trainning ----------------------------------
+	c_all=[]
+	c_all.append(0)	
+	w_all=np.zeros(Vac)
+	for t in range(T):
+		for i,val in enumerate(Xtrain):
+			if((Ytrain[i]-0.5)*sum(w_all[-1]*val) <= 0):
+				w_all=np.vstack([w_all,w_all[-1]+2*(Ytrain[i]-0.5)*val])
+				c_all.append(1)
+			else:
+				c_all[-1]+=1
+	c_all=np.asarray(c_all)
 	if DEBUG==True:
-		print("test_index:{}".format(Test_index))
-		print("test_index:{}".format(Test_index.shape))
-	#P_y1	=	np.sum(np.log10(C1_prob)*Xtest,axis=1)+np.log10(float(Y_1count/Y_count))
-	#P_y0	=	np.sum(np.log10(C0_prob)*Xtest,axis=1)+np.log10(float(Y_0count/Y_count))
-	#P_diff	=	P_y1-P_y0
-	P_diff	=	np.sum(np.log10(C1toC0)*Test_index,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
+		print("w_all :{}".format(w_all))
+		print("w_all shape:{}".format(w_all.shape))
+		print("c_all :{}".format(c_all))
+		print("c_all shape:{}".format(c_all.shape))
+
+#---------------------------------------------------------------------
+#------------------Prediction & Save----------------------------------
+	#return []
 	pred_y	=	[]
-	for x in np.nditer(P_diff):
-		if x >=0:
-			pred_y.append(int(1))
-		else:
-			pred_y.append(int(0))
+	for x in Xtest:
+			xdotw = np.sum(x*w_all,axis=1)
+			if DEBUG==True:
+				print("x:{}".format(x.shape))	
+				print("xdot_wall:{}".format(xdotw))	
+				print("xdot_wall shape:{}".format(xdotw.shape))
+			y=np.sign(np.sum(c_all*np.sign(xdotw)))	
+			if y >=0:
+				pred_y.append(int(1))
+			else:
+				pred_y.append(int(0))
 	pred_y	=	np.asarray(pred_y)
-	#acc,Fmea,FinalScore=GetScore(Ytest,pred_y)
 	print("pred_y:{}".format(pred_y))
 	print("Ytrain:{}".format(Ytrain))
 	print("Xtrain:{}".format(Xtrain))
-	#print("Acc:{} Fmea:{} FinalCore;{}".format(acc,Fmea,FinalScore))
 	np.savetxt(pred_file,pred_y,fmt='%d',delimiter=',')
-	#write_data(pred_file,pred_y)
-	#P_diff1=np.sum(np.log10((W)))
-	if DEBUG==True:
-		print("P_y1:{}".format(P_y1))
-		print("P_y0:{}".format(P_y0))
-		print("P_y1-y0:{}".format(P_diff))
-		print("P_y1-y0:shape{}".format(P_diff.shape))
-		print("Y_test:{}".format(Ytest))
-		print("Y_test shape:{}".format(Ytest.shape))
-		print("Ypred:{}".format(pred_y))
-		print("W_1all:{}".format(W_1all.sum()))
-		print("W_1all:{}".format(np.sum(W_1all)))
-		print("W_0all:{}".format(W_0all.sum()))
-		print("W_notzero:{}".format(W_notzero))
-		print("W_notzero shape:{}".format(W_notzero.shape))
 	return pred_y
 
 def GetScore(Ytest,pred_y):

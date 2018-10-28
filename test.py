@@ -9,6 +9,7 @@
 import numpy as np
 import csv, sys
 import numpy.matlib as matlib
+import time
 from run import run
 from run import GetScore
 
@@ -56,6 +57,9 @@ Ytest		=	Yarray[int(test_pct*data_length):,...]
 np.savetxt(Xtrain_file,Xtrain,fmt='%d',delimiter=',')
 np.savetxt(Ytrain_file,Ytrain,fmt='%d',delimiter=',')
 np.savetxt(test_data_file,Xtest,fmt='%d',delimiter=',')
+t=time.time()
 pred_y=run(Xtrain_file, Ytrain_file, test_data_file, pred_file)
 acc,Fmea,Final_score=GetScore(Ytest,pred_y)
+elapsed=time.time()-t
+print("Elapsed:{}".format(elapsed))
 print("acc"+str(acc)+" Fmea"+str(Fmea)+" Final_score"+str(Final_score))
