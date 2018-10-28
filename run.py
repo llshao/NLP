@@ -38,23 +38,7 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	Ytrain		=	np.loadtxt(Ytrain_file,delimiter=',',dtype=int)
 	Xtest		=	np.loadtxt(test_data_file,delimiter=',',dtype=int)
 	Vac		= 	len(Xtrain[0])
-	#if SHUFFLE==True:
-	#	Shuffle_index	=	np.random.permutation(range(data_length)) 
-	#else:
-	#	Shuffle_index	=	range(data_length) 
-	
-	#if DEBUG==True:
-	#	print("Shuffle:{}".format(Shuffle_index))
-	#Xtrain		=	Xtrain[Shuffle_index,...]
-	#Ytrain		=	Ytrain[Shuffle_index]
-	#test_pct	=	0.9
-	#train_pct	=	1.0
-	#Xtrain		=	Xarray[0:int(train_pct*test_pct*data_length),...]
-	#Xtest		=	Xarray[int(test_pct*data_length):,...]
-	#Ytrain		=	Yarray[0:int(test_pct*data_length),...]
-	#Ytest		=	Yarray[int(test_pct*data_length):,...]
-	#Xtrain		=	read_traindata(Xtrain_file)
-	#Ytrain		=	read_traindata(Ytrain_file)
+	Y_count 	= 	len(Ytrain)
 	#DEBUGGING ONLY
 	if(DEBUG==True):
 		for i in range(0,1):
@@ -76,19 +60,12 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 			print(Ytrain[i].ndim)
 			print(type(Ytrain[i]))
 			print(type(Ytrain[i]))
-			#print('i{}: Xtrain{}: Row{}: Col{}'.format(i,Xtrain[i],len(Xtrain),len(Xtrain[i])))
-			#write_data(Xread_file,Xtrain)
-			#print('i{}: Ytrain{}: Row{}: Col{}'.format(i,Ytrain[i],len(Ytrain),len(Ytrain[i])))
-			#write_data(Yread_file,Ytrain)
 
 
 	print("I LOVE LOVE NLP!!")
 	##----------------------------------------------
 	##--------Train Data Processing------------------
 	##----------------------------------------------
-	Y_count  = len(Ytrain)
-	#Vac	 = len(X_1array[0])
-	#W_0all   = [sum(x) for x in zip(*X_0array)]
 	if(DEBUG==True):
 		print('Ytrian type:{}'.format(type(Ytrain)))
 		print('Xtrian type:{}'.format(type(Xtrain)))
