@@ -58,35 +58,10 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 
 	# save your predictions into the file pred_file
 	print("I LOVE NLP!")
-	#Xtrain		=	[]
-	#Ytrain		=	[]
-	#Xarray 		=	np.asarray(read_traindata(Xtrain_file))
-	#Yarray 		=	np.asarray(read_traindata(Ytrain_file))
 	Xtrain		=	np.loadtxt(Xtrain_file,delimiter=',',dtype=int)
 	Ytrain		=	np.loadtxt(Ytrain_file,delimiter=',',dtype=int)
 	Xtest		=	np.loadtxt(test_data_file,delimiter=',',dtype=int)
-	#Xtrain		=	np.asarray(read_traindata(Xtrain_file))
-	#Ytrain		=	np.asarray(read_traindata(Ytrain_file))
-	#Xtest		=	np.asarray(read_traindata(test_data_file))
-	#data_length	=	len(Xtrain)
 	Vac		= 	len(Xtrain[0])
-	#if SHUFFLE==True:
-	#	Shuffle_index	=	np.random.permutation(range(data_length)) 
-	#else:
-	#	Shuffle_index	=	range(data_length) 
-	
-	#if DEBUG==True:
-	#	print("Shuffle:{}".format(Shuffle_index))
-	#Xtrain		=	Xtrain[Shuffle_index,...]
-	#Ytrain		=	Ytrain[Shuffle_index]
-	#test_pct	=	0.9
-	#train_pct	=	1.0
-	#Xtrain		=	Xarray[0:int(train_pct*test_pct*data_length),...]
-	#Xtest		=	Xarray[int(test_pct*data_length):,...]
-	#Ytrain		=	Yarray[0:int(test_pct*data_length),...]
-	#Ytest		=	Yarray[int(test_pct*data_length):,...]
-	#Xtrain		=	read_traindata(Xtrain_file)
-	#Ytrain		=	read_traindata(Ytrain_file)
 	#DEBUGGING ONLY
 	if(DEBUG==True):
 		for i in range(0,2):
@@ -108,11 +83,6 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 			print(Ytrain[i].ndim)
 			print(type(Ytrain[i]))
 			print(type(Ytrain[i]))
-			#print('i{}: Xtrain{}: Row{}: Col{}'.format(i,Xtrain[i],len(Xtrain),len(Xtrain[i])))
-			#write_data(Xread_file,Xtrain)
-			#print('i{}: Ytrain{}: Row{}: Col{}'.format(i,Ytrain[i],len(Ytrain),len(Ytrain[i])))
-			#write_data(Yread_file,Ytrain)
-
 
 	print("I LOVE LOVE NLP!!")
 	##----------------------------------------------
@@ -128,8 +98,6 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	W_1all   = np.asarray([sum(x) for x in zip(*X_1array)])
 	W_0all   = np.asarray([sum(x) for x in zip(*X_0array)])
 	W_all    = W_1all+W_0all
-	#Vac	 = len(X_1array[0])
-	#W_0all   = [sum(x) for x in zip(*X_0array)]
 	if(DEBUG==True):
 		print('Yarray type:{}'.format(type(Yarray)))
 		print('Y_1index:{}'.format(Y_1index))
@@ -174,14 +142,7 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 		else:
 			pred_y.append(int(0))
 	pred_y	=	np.asarray(pred_y)
-	#acc,Fmea,FinalScore=GetScore(Ytest,pred_y)
-	print("pred_y:{}".format(pred_y))
-	print("Ytrain:{}".format(Ytrain))
-	print("Xtrain:{}".format(Xtrain))
-	#print("Acc:{} Fmea:{} FinalCore;{}".format(acc,Fmea,FinalScore))
 	np.savetxt(pred_file,pred_y,fmt='%d',delimiter=',')
-	#write_data(pred_file,pred_y)
-	#P_diff1=np.sum(np.log10((W)))
 	if DEBUG==True:
 		print("P_y1:{}".format(P_y1))
 		print("P_y0:{}".format(P_y0))
