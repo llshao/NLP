@@ -9,7 +9,7 @@
 import numpy as np
 import csv, sys
 import numpy.matlib as matlib
-DEBUG=True
+DEBUG=False
 # define other functions here
 def read_traindata(file_name):
 	data	=	[]
