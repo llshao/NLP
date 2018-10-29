@@ -79,6 +79,7 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 		for i,val in enumerate(Xtrain):
 			if((Ytrain[i]-0.5)*sum(w_all[-1]*val) <= 0):
 				w_all=np.vstack([w_all,w_all[-1]+2*(Ytrain[i]-0.5)*val])
+			##TODO: chek repeating to avoid ifnite increasing od w_all & c_all in linear unseparable case
 				c_all.append(1)
 			else:
 				c_all[-1]+=1
