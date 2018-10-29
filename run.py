@@ -9,7 +9,7 @@
 import numpy as np
 import csv, sys
 import numpy.matlib as matlib
-DEBUG=False
+DEBUG=True
 # define other functions here
 def read_traindata(file_name):
 	data	=	[]
@@ -64,8 +64,8 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	Vac		= 	len(Xtrain[0])
 	#DEBUGGING ONLY
 	if(DEBUG==True):
-		for i in range(0,2):
-			print('i{}: Xarray{}: Shape:'.format(i,Xarray))
+		for i in range(0,1):
+			print('i{}: Xtrain{}: Shape:'.format(i,Xtrain))
 			print(Xtrain.shape)
 			print(Xtrain.ndim)
 			print(Xtrain.size)
@@ -75,7 +75,7 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 			print(type(Xtrain[i,0]))
 			print(type(Xtrain[i]))
 			print(type(Xtrain[i][0]))
-			print('i{}: Yarray{}: Shape:'.format(i,Yarray))
+			print('i{}: Ytrian{}: Shape:'.format(i,Ytrain))
 			print(Ytrain.shape)
 			print(Ytrain.ndim)
 			print(Ytrain.size)
@@ -99,7 +99,7 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	W_0all   = np.asarray([sum(x) for x in zip(*X_0array)])
 	W_all    = W_1all+W_0all
 	if(DEBUG==True):
-		print('Yarray type:{}'.format(type(Yarray)))
+		print('Ytrain type:{}'.format(type(Ytrain)))
 		print('Y_1index:{}'.format(Y_1index))
 		print('X_1array:{}'.format(X_1array))
 		print('X_1array shape:{}'.format(X_1array.shape))
@@ -119,7 +119,6 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	#C1_prob	=	(1.0+W_1all)/(np.sum(W_1all)+Vac)
 	#C0_prob	=	(1.0+W_0all)/(np.sum(W_0all)+Vac)
 	C1toC0	=	((float(1.0)+W_1all)/(float(1.0)+W_0all))*((np.sum(W_0all)+float(Vac))/(np.sum(W_1all)+float(Vac)))
-	#Test_index =	np.zeros(Xtest.shape)
 	Test_index =	[]
 	for x in np.nditer(Xtest):
 		if x >0:
@@ -134,7 +133,11 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	#P_y1	=	np.sum(np.log10(C1_prob)*Xtest,axis=1)+np.log10(float(Y_1count/Y_count))
 	#P_y0	=	np.sum(np.log10(C0_prob)*Xtest,axis=1)+np.log10(float(Y_0count/Y_count))
 	#P_diff	=	P_y1-P_y0
-	P_diff	=	np.sum(np.log10(C1toC0)*Test_index,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
+	#P_diff	=	np.sum(np.log10(C1toC0)*Test_index,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
+	#P_diff	=	np.sum(np.log10(C1toC0)*(Xtest+1),axis=1)/(np.sum(Xtest,axis=1)+Vac)+np.log10(float(Y_1count)/float(Y_0count))
+	#P_diff	=	np.sum(np.log10(C1toC0)/(1.0+W_all)*Y_count*Xtest,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
+	#P_diff	=	np.sum(np.log10(C1toC0)*Test_index,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
+	P_diff	=	np.sum(np.log10(C1toC0)*Xtest,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
 	pred_y	=	[]
 	for x in np.nditer(P_diff):
 		if x >=0:
@@ -144,12 +147,8 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	pred_y	=	np.asarray(pred_y)
 	np.savetxt(pred_file,pred_y,fmt='%d',delimiter=',')
 	if DEBUG==True:
-		print("P_y1:{}".format(P_y1))
-		print("P_y0:{}".format(P_y0))
 		print("P_y1-y0:{}".format(P_diff))
 		print("P_y1-y0:shape{}".format(P_diff.shape))
-		print("Y_test:{}".format(Ytest))
-		print("Y_test shape:{}".format(Ytest.shape))
 		print("Ypred:{}".format(pred_y))
 		print("W_1all:{}".format(W_1all.sum()))
 		print("W_1all:{}".format(np.sum(W_1all)))
