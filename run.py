@@ -137,7 +137,8 @@ def run(Xtrain_file, Ytrain_file, test_data_file, pred_file):
 	#P_diff	=	np.sum(np.log10(C1toC0)*(Xtest+1),axis=1)/(np.sum(Xtest,axis=1)+Vac)+np.log10(float(Y_1count)/float(Y_0count))
 	#P_diff	=	np.sum(np.log10(C1toC0)/(1.0+W_all)*Y_count*Xtest,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
 	#P_diff	=	np.sum(np.log10(C1toC0)*Test_index,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
-	P_diff	=	np.sum(np.log10(C1toC0)*Xtest,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
+	#P_diff	=	np.sum(np.log10(C1toC0)*Xtest,axis=1)+np.log10(float(Y_1count)/float(Y_0count))
+	P_diff	=	np.matmul(Xtest,np.log10(C1toC0))+np.log10(float(Y_1count)/float(Y_0count))
 	pred_y	=	[]
 	for x in np.nditer(P_diff):
 		if x >=0:
